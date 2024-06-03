@@ -1,12 +1,4 @@
 package client;
-/*
-Client connection requests are queued at the port, so the server must accept the connections sequentially.
-However, the server can service them simultaneously through the use of threads—one thread per
-each client connection.
-
-Original code in this file came from DateServer.java from the class resources page.
- */
-
 
 
 import java.awt.Color;
@@ -19,20 +11,6 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
-//this handles messages received from the Server
-/*
- * the reason we separate receiving and sending messages from the server:
- *
- * sending messages is event driven. We only send messages when the gui tells us to send messages
- * so there's no reason to have it running in its own while loop or thread
- *
- * however receiving messages is different. We may constantly be receiving messages from the server
- * so we need a loop constantly running for this
- * However since we need a loop to be constantly running, we need this to be in its own thread
- * otherwise if we had it as part of the main thread, the loop would just keep running and take up all the time
- * nothing else would work
- */
-
 public class ClientThread extends Thread implements Runnable {
     private Socket sock = null;
     private BufferedReader fromServer;
@@ -44,20 +22,16 @@ public class ClientThread extends Thread implements Runnable {
 
         if (newsock != null) {
             System.out.println("We have liftoff: setting up clientthread");
-            //copy the existing socket in Chatty builder so that we can receive input
             sock = newsock;
 
-            //when we receive a new message from the server, we call chatty builder to display it
             mPanel = gui;
 
-            //open an input stream - sets fromServer
             open();
 
-            //start thread
             Thread t = new Thread(this);
             t.start();
             waiting = new Boolean(true);
-        }//end if args match
+        }
         else {
             System.out.println("Insufficient socket passed is invalid");
             System.exit(0);
@@ -65,11 +39,9 @@ public class ClientThread extends Thread implements Runnable {
     }
 
     public void open() {
-        //set up input stream
         try {
             fromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -78,7 +50,6 @@ public class ClientThread extends Thread implements Runnable {
 
     @Override
     public void run() {
-        //block until everything's set up -> on the order of milliseconds
         while(waiting) {
 
             try {
@@ -89,7 +60,6 @@ public class ClientThread extends Thread implements Runnable {
 
         }
 
-        //this main loop continuously receives messages from the Server
         while(true) {
             try {
                 System.out.println("waiting for message");
@@ -101,7 +71,6 @@ public class ClientThread extends Thread implements Runnable {
                     System.out.println("renaming opponent to: " + names[1]);
                 }
                 else if(Protocol.isChatMessage(msg)) {
-                    //display message handles the parsing
                     System.out.println("displaying chat message: " + msg);
                     mPanel.displayMessage(msg);
                 }
@@ -164,17 +133,14 @@ public class ClientThread extends Thread implements Runnable {
             }
         }
 
-    }//end run
+    }
 
     public void close() {
-        // TODO Auto-generated method stub
         if (fromServer != null)
         {
             try {
                 fromServer.close();
-                //close socket in messagepanel
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }

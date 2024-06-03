@@ -19,8 +19,7 @@ public class DataPanel extends JPanel {
     private static final String YOULOSEMESSAGE = "You have lost.";
     private static final String OPPRESETMESSAGE = "The opponent has requested a reset";
     private static final String YOURESETMESSAGE = "You have requested a reset";
-    private static final String WAITINGFORCONNECTION =
-            "Waiting for an opponent to connect";
+    private static final String WAITINGFORCONNECTION = "Waiting for an opponent to connect";
     private static final String OPPCONNECTING = "An opponent is connecting...";
     private static final String OPPONENTNAME = "playing against: \n";
     private static final String YOURNAME = "playing as: \n";
@@ -34,28 +33,10 @@ public class DataPanel extends JPanel {
     private JTextArea opponent;
     private JTextArea dialogue;
 
-//	//testing main
-//	public static void main(String[] args) {
-//		JFrame frame = new JFrame();
-//		String[] arg = {"localhost", "12345"};
-//
-//		try {
-//			MessagePanel mp = new MessagePanel(arg);
-//			frame.add(new DataPanel(mp));
-//			frame.pack();
-//			frame.setVisible(true);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//
-//	}
-
     public DataPanel(MessagePanel mp) {
         setLayout(new FlowLayout());
         mainPanel = mp;
 
-        //set up flow layout
         currentUsername = new JTextArea();
         opponent = new JTextArea();
         dialogue = new JTextArea();
@@ -69,22 +50,17 @@ public class DataPanel extends JPanel {
         add(dialogue);
 
         updateDialogueArea(MESSAGETYPE.WAITING);
-        updateUsernameArea(MESSAGETYPE.WAITING); //messagetype waiting is just a bogus arg to create default msg
+        updateUsernameArea(MESSAGETYPE.WAITING);
         updateOpponentArea(MESSAGETYPE.WAITING);
-        //opponent in mainPanel is defaulted to "waiting for opponent to connect"
-        //so we can update the area even if no one connects
     }
 
     private void setUpTextArea(JTextArea jf) {
         jf.setEditable(false);
         jf.setFont(new Font("Arial", Font.BOLD, 24));
-//		jf.setLineWrap(true);
     }
 
     public void updateDialogueArea(MESSAGETYPE t) {
         switch(t) {
-            //CHAT, YOUWIN, YOULOSE, BLACKTURN, WHITETURN,
-            //YOURTURN, YOURESET, OPPRESET
             case YOUWIN:
                 dialogue.setText(YOUWINMESSAGE);
                 break;

@@ -10,9 +10,7 @@ import java.util.ArrayList;
 public class DrawingPanel extends JPanel {
 
     private final static int intersectionPerRowOrColumn = 16;
-    //number of gridlines going in each direction
     private final static int distanceBetweenIntersections = 40;
-    //distance between each grid in pixels
     private ArrayList<Point> pointList = new ArrayList<>();
     public static final int radius = 15;
     private Color currentColor = Color.WHITE;
@@ -20,29 +18,10 @@ public class DrawingPanel extends JPanel {
     private MessagePanel mPanel = null;
     private ArrayList<GomokuPiece> circleList= new ArrayList<GomokuPiece>();
 
-    // this is called when we receive from the server - it's easier for this to just be a string
-    // server will send these messages:
-    // game start: A vs B
-    // game finished: A won
-    // game finished: A won because B left
-    // turn: 10 15
     public void setCurrentColor(Color color) { currentColor = color; }
-    public Color getCurrentColor() {return currentColor;}
+    public Color getCurrentColor() { return currentColor; }
 
-    //Don't need a main here since we use the one in gomoku
-/*    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createAndShow();
-            }
-        });
-    }*/
-
-    // CONSTRUCTOR
     DrawingPanel() {
-        //create arraylist of valid intersections to check against
-
-        // logic: going across rows, then going across columns to store points in pointList
         for(int y = 1; y < intersectionPerRowOrColumn; y++) {
             for(int x = 1; x < intersectionPerRowOrColumn; x++) {
                 int ptY = y * distanceBetweenIntersections;
@@ -51,7 +30,6 @@ public class DrawingPanel extends JPanel {
             }
         }
 
-        //add mouse listener
         addMouseListener(new MouseAdapter() {
             public void mouseReleased(MouseEvent e) {
                 if(!frozen) {
@@ -59,12 +37,11 @@ public class DrawingPanel extends JPanel {
                     Point clickedPoint = e.getPoint();
                     System.out.println("Click is at: X = " + clickedPoint.getX() + " Y: " + clickedPoint.getY());
 
-                    // pass intersection to the point array finder
                     Point intersection = findIntersection(clickedPoint);
 
                     if ( intersection == null ) {
                         System.out.println("invalid point, nothing to do");
-                    } else { // point is in an intersection
+                    } else {
                         System.out.println("Click centered at: x=" + intersection.getX() + " y=" + intersection.getY());
                         drawGomokuPiece(intersection, currentColor);
 
@@ -77,7 +54,6 @@ public class DrawingPanel extends JPanel {
                         y = y - 1;
 
                         mPanel.sendMessage(Protocol.generatePlayMessage(isBlack, x, y));
-                        //send to server
                     }
                 }
                 else {
@@ -90,41 +66,34 @@ public class DrawingPanel extends JPanel {
     }
 
 
-    // ENTER FUNCTION PAINT COMPONENT
     @Override
     protected void paintComponent(Graphics g) {
         System.out.println("Entered paint component in DrawingPanel");
 
         g.clearRect(0, 0, getWidth(), getHeight());
 
-        //draw grid lines going horizontally i.e. x is changing
         for(int i = 1; i <= intersectionPerRowOrColumn; i++) {
             int x = i * distanceBetweenIntersections;
             g.drawLine(x, 0, x, 640);
 
-            // TODO: get rid of the extra line on the side - I don't know why it is there
         }
 
-        //draw grid lines going vertically i.e. y is changing
         for(int i = 1; i < intersectionPerRowOrColumn; i++) {
             int y = i * distanceBetweenIntersections;
             g.drawLine(0, y, 600, y);
-//            System.out.println("Vertical line number: " + i);
         }
 
         for(GomokuPiece p : circleList) {
             g.setColor(p.color);
             g.fillOval(p.x, p.y, 2 * p.radius, 2 * p.radius);
-            g.setColor(Color.GRAY); //outline makes white piece more readable
+            g.setColor(Color.GRAY);
             g.drawOval(p.x, p.y, 2 * p.radius, 2 * p.radius);
         }
     }
 
 
-    // ENTER FUNCTION DRAW GOMOKU PIECE
     public void drawGomokuPiece(Point intersect, Color color) {
         Point intersection = new Point((int)intersect.getX(), (int)intersect.getY());
-        // make a circle with the intersection at the center
         System.out.println("intersection  x:" + intersection.getX() + " y: " + intersection.getY());
 
         int minX = (int)(intersection.getX()) - radius;
@@ -148,8 +117,6 @@ public class DrawingPanel extends JPanel {
             mPanel.getDataPanel().updateDialogueArea(MESSAGETYPE.YOURTURN);
             unfreeze();
         }
-        // boolean winner = GomokuLogic.checkWinCondition();
-        //System.out.println("Winner is: " + winner);
     }
 
     @Override
@@ -157,13 +124,11 @@ public class DrawingPanel extends JPanel {
         return new Dimension(distanceBetweenIntersections * intersectionPerRowOrColumn, intersectionPerRowOrColumn * distanceBetweenIntersections);
     }
 
-    //temp testing
     public static void createAndShow() {
         JPanel draw = new JPanel();
         draw.setBackground(new Color(255, 255 ,240));
     }
 
-    // ENTER FUNCTION FIND INTERSECTION
     public Point findIntersection(Point p) {
         Point intersection = null;
 
@@ -178,7 +143,6 @@ public class DrawingPanel extends JPanel {
 
             if ( actualX < xUpperBound && actualX > xLowerBound &&
                     actualY < yUpperBound && actualY > yLowerBound ) {
-                // if it is in the radius of the point - aka if the intersection is clicked accurately
                 intersection = actualIntersection;
             }
         }
@@ -191,19 +155,15 @@ public class DrawingPanel extends JPanel {
         circleList.clear();
         Graphics g = getGraphics();
         g.clearRect(0, 0, getWidth(), getHeight());
-        //draw grid lines going horizontally i.e. x is changing
         for(int i = 1; i <= intersectionPerRowOrColumn; i++) {
             int x = i * distanceBetweenIntersections;
             g.drawLine(x, 0, x, 640);
 
-            // TODO: get rid of the extra line on the side - I don't know why it is there
         }
 
-        //draw grid lines going vertically i.e. y is changing
         for(int i = 1; i < intersectionPerRowOrColumn; i++) {
             int y = i * distanceBetweenIntersections;
             g.drawLine(0, y, 600, y);
-//            System.out.println("Vertical line number: " + i);
         }
 
 
@@ -211,7 +171,6 @@ public class DrawingPanel extends JPanel {
     }
 
     public void freeze() {
-        //freeze panel when game ends
         frozen = true;
     }
 

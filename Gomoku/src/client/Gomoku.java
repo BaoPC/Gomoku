@@ -13,8 +13,6 @@ public class Gomoku extends JFrame {
     private static MessagePanel messagePanel = null;
 
     public static void main(String[] args) {
-        // ShapeHandler shapeHandler = new ShapeHandler(Color.BLACK);
-        // I may have messed this up
         DrawingPanel drawingPanel = new DrawingPanel();
         try {
             if(args.length < 2 ) {

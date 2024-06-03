@@ -22,11 +22,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-//this handles Communication with server and the messaging functions
 
 public class MessagePanel extends JPanel implements ActionListener {
-
-    // variables + getters
 
     private String username;
     private String opponent;
@@ -36,37 +33,12 @@ public class MessagePanel extends JPanel implements ActionListener {
     private DrawingPanel drawingPanel = null;
     private Socket sock = null;
 
-    //create all buttons and areas
     JButton sendMessage = new JButton("Send");
     JTextField messageBox = new JTextField(20);
     JTextArea chatHistory = new JTextArea();
-//
-//    public static void main(String[] args) {
-//    	JFrame frame = new JFrame("gomoku");
-//    	JPanel panel = new JPanel();
-//
-//
-//    	String[] args1 = {"localhost", "12341"};
-//     	try {
-//			panel.add(new MessagePanel(args1));
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//
-//     	frame.add(panel);
-//        frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-//        frame.setSize(1000, 700);
-//        frame.setLocationRelativeTo( null );
-//        frame.pack();
-//        frame.setVisible(true);
-//    }
 
-    //this function creates all the tabs
     public MessagePanel(String args[], DrawingPanel dp) throws IOException {
 
-        //do this
-        //code to draw the message panel here
         setLayout(new BorderLayout());
 
         JPanel southPanel = new JPanel();
@@ -77,7 +49,6 @@ public class MessagePanel extends JPanel implements ActionListener {
         drawingPanel = dp;
 
 
-        //activate a socket
         startConnection(args[0], Integer.parseInt(args[1]));
 
         messageBox.setFont(new Font("Arial", Font.PLAIN, 22));
@@ -94,17 +65,14 @@ public class MessagePanel extends JPanel implements ActionListener {
         chatHistory.setLineWrap(true);
 
         add(new JScrollPane(chatHistory), BorderLayout.CENTER);
-        //start the receive socket now that everything is set up
         clientThread.doneWaiting();
     }
 
-    //this function initializes the socket to send and receive messages
     private void startConnection(String hostname, int portnumber) {
         try {
             sock = new Socket(hostname, portnumber);
             out = new PrintWriter(sock.getOutputStream(), true);
             out.flush();
-
 
             if(clientThread == null) {
                 clientThread = new ClientThread(sock, this);
@@ -117,15 +85,12 @@ public class MessagePanel extends JPanel implements ActionListener {
             sendMessage(Protocol.generateChangeNameMessage("asd", username));
 
         } catch (UnknownHostException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
-    // this function displays the received messages
     public void displayMessage(String message) {
 
         String[] messageDetails = Protocol.getChatDetail(message);
@@ -142,7 +107,6 @@ public class MessagePanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // TODO Auto-generated method stub
         JButton button = (JButton) e.getSource();
 
         if (button.getText() == "Send") {
@@ -153,7 +117,7 @@ public class MessagePanel extends JPanel implements ActionListener {
             displayMessage(parsedMessage);
             messageBox.setText("");
 
-        }//end if send
+        }
     }
 
     public void reset() {
@@ -169,7 +133,6 @@ public class MessagePanel extends JPanel implements ActionListener {
         try {
             sock.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         datapanel.updateDialogueArea(MESSAGETYPE.YOUGIVEUP);
@@ -190,20 +153,14 @@ public class MessagePanel extends JPanel implements ActionListener {
 
 
         datapanel.updateOpponentArea(m);
-        //do datapanel stuff here to redisplay
     }
     public String getUsername() { return username; }
 
     public void setUsername(String u) {
         username = u;
-        //do datapanel stuff here to redisplay
-        //send change username message to server
     }
 
-    //do this : move to drawing panel
     public void windowClosed(WindowEvent e) throws IOException {
-        //do this
-        //need to close socket and other things
         sendMessage(Protocol.generateGiveupMessage());
     }
 
@@ -224,7 +181,6 @@ public class MessagePanel extends JPanel implements ActionListener {
     public DrawingPanel getDrawingPanel() {return drawingPanel;}
 
     public void changeName(String text) {
-        // TODO Auto-generated method stub
         sendMessage(Protocol.generateChangeNameMessage(username, text));
 
         username = text;
@@ -234,8 +190,5 @@ public class MessagePanel extends JPanel implements ActionListener {
             datapanel.updateUsernameArea(MESSAGETYPE.BLACK);
         else
             datapanel.updateUsernameArea(MESSAGETYPE.WHITE);
-
-
     }
-
-} // end ChatterClient
+}

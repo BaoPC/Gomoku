@@ -127,9 +127,4 @@ public class Protocol {
     public static boolean isGiveupMessage(String msg) {
         return msg.startsWith(MESSAGE_GIVEUP);
     }
-
-    public static void main(String[] args) {
-
-    }
-
 }
